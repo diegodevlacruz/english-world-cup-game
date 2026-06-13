@@ -45,7 +45,7 @@ function buildDraw(teams) {
 
 // ── Bracket component ─────────────────────────────────────────────────────────
 
-export function Bracket({ teams, onBack }) {
+export function Bracket({ teams, onBack, onComplete }) {
   const [draw]                   = useState(() => buildDraw(teams))
   const [revealed, setRevealed]  = useState(0)
 
@@ -151,11 +151,10 @@ export function Bracket({ teams, onBack }) {
 
         <button
           type="button"
-          className="next-btn bracket-next"
-          onClick={handleNext}
-          disabled={allRevealed}
+          className={`bracket-next${allRevealed ? ' bracket-letsplay' : ''}`}
+          onClick={allRevealed ? () => onComplete(matches) : handleNext}
         >
-          {allRevealed ? 'Draw Complete' : 'Next →'}
+          {allRevealed ? "Let's Play! →" : 'Next →'}
         </button>
       </footer>
     </div>
