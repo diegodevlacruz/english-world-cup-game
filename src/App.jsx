@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { CountryPicker } from './CountryPicker'
+import { Bracket } from './Bracket'
 import './App.css'
 
 const TEAMS = [
@@ -44,14 +45,17 @@ const TEAMS = [
 const MAX_PLAYERS = 16
 
 function App() {
-  const [screen, setScreen] = useState('start') // 'start' | 'players' | 'game' | 'ready'
+  const [screen, setScreen] = useState('start') // 'start' | 'players' | 'game' | 'bracket'
   const [playerCount, setPlayerCount] = useState(2)
   const [selectedTeams, setSelectedTeams] = useState([])
   const [musicOn, setMusicOn] = useState(true)
+  const [musicPaused, setMusicPaused] = useState(false)
   const audioRef = useRef(null)
 
   function startMusic() {
-    audioRef.current?.play().catch(() => {})
+    if (!audioRef.current) return
+    audioRef.current.volume = 0.4
+    audioRef.current.play().catch(() => {})
   }
 
   function toggleMute() {
@@ -59,6 +63,17 @@ function App() {
     const newMusicOn = !musicOn
     audioRef.current.muted = !newMusicOn
     setMusicOn(newMusicOn)
+  }
+
+  function togglePause() {
+    if (!audioRef.current) return
+    if (musicPaused) {
+      audioRef.current.play().catch(() => {})
+      setMusicPaused(false)
+    } else {
+      audioRef.current.pause()
+      setMusicPaused(true)
+    }
   }
 
   function handleCountChange(e) {
@@ -83,42 +98,41 @@ function App() {
       {/* Persistent audio — never unmounts so music survives screen changes */}
       <audio ref={audioRef} src="/La_copa_de_todos.mp3" loop preload="auto" />
 
-      {/* Mute toggle — shown on all screens */}
-      <button
-        className="music-toggle"
-        onClick={toggleMute}
-        aria-label={musicOn ? 'Mute music' : 'Unmute music'}
-        title={musicOn ? 'Mute music' : 'Unmute music'}
-      >
-        {musicOn ? '🔊' : '🔇'}
-      </button>
+      {/* Music controls — shown on all screens */}
+      <div className="music-controls">
+        <button
+          className="music-btn"
+          onClick={togglePause}
+          aria-label={musicPaused ? 'Play music' : 'Pause music'}
+          title={musicPaused ? 'Play music' : 'Pause music'}
+        >
+          {musicPaused ? '▶' : '⏸'}
+        </button>
+        <button
+          className="music-btn"
+          onClick={toggleMute}
+          aria-label={musicOn ? 'Mute music' : 'Unmute music'}
+          title={musicOn ? 'Mute music' : 'Unmute music'}
+        >
+          {musicOn ? '🔊' : '🔇'}
+        </button>
+      </div>
 
       {screen === 'game' && (
         <CountryPicker
           playerCount={playerCount}
           onComplete={teams => {
             setSelectedTeams(teams)
-            setScreen('ready')
+            setScreen('bracket')
           }}
         />
       )}
 
-      {screen === 'ready' && (
-        <div className="press-start-page">
-          <div className="stadium-glow" />
-          <main className="content">
-            <div className="badge">⚽ English World Cup 2026</div>
-            <div className="ready-flags">
-              {selectedTeams.map(t => (
-                <span key={t.name} title={t.name} className="ready-flag">{t.flag}</span>
-              ))}
-            </div>
-            <p className="confirmed-count" style={{ fontSize: '1.2rem', fontWeight: 700 }}>
-              {selectedTeams.length} {selectedTeams.length === 1 ? 'country' : 'countries'} selected
-            </p>
-            <p className="player-hint">Game screen coming in next iteration</p>
-          </main>
-        </div>
+      {screen === 'bracket' && (
+        <Bracket
+          teams={selectedTeams}
+          onBack={() => setScreen('game')}
+        />
       )}
 
       {(screen === 'start' || screen === 'players') && (

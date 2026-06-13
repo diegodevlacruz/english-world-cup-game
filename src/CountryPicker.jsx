@@ -64,6 +64,7 @@ export function CountryPicker({ playerCount, onComplete }) {
   const [flyingFlags, setFlyingFlags] = useState([])
   const slotsRef = useRef([])
   const flyCounter = useRef(0)
+  const pendingRef = useRef(new Set())
 
   const isSelected = (team) => selected.some(t => t.name === team.name)
   const remaining = playerCount - selected.length
@@ -73,7 +74,8 @@ export function CountryPicker({ playerCount, onComplete }) {
   }
 
   function handleSelect(team, e) {
-    if (isSelected(team) || remaining === 0) return
+    if (isSelected(team) || remaining === 0 || pendingRef.current.has(team.name)) return
+    pendingRef.current.add(team.name)
 
     const cardRect = e.currentTarget.getBoundingClientRect()
     const slotEl = slotsRef.current[selected.length]
@@ -100,6 +102,7 @@ export function CountryPicker({ playerCount, onComplete }) {
 
     setTimeout(() => {
       setSelected(prev => {
+        if (prev.some(t => t.name === team.name) || prev.length >= playerCount) return prev
         const next = [...prev, team]
         if (next.length >= playerCount) {
           setTimeout(() => onComplete(next), 800)
@@ -107,6 +110,7 @@ export function CountryPicker({ playerCount, onComplete }) {
         return next
       })
       setFlyingFlags(prev => prev.filter(f => f.id !== flyId))
+      pendingRef.current.delete(team.name)
     }, 520)
   }
 
