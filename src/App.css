@@ -266,12 +266,17 @@
   to { transform: translateX(-50%); }
 }
 
-/* ── Music toggle ────────────────────────────────────── */
-.music-toggle {
+/* ── Music controls ──────────────────────────────────── */
+.music-controls {
   position: fixed;
   bottom: 0.9rem;
   right: 0.9rem;
   z-index: 10000;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.music-btn {
   background: rgba(0, 0, 0, 0.55);
   border: 1.5px solid rgba(255, 215, 0, 0.3);
   border-radius: 50%;
@@ -286,14 +291,15 @@
   transition: background 0.15s, border-color 0.15s, transform 0.12s;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  color: #fff;
 }
 
-.music-toggle:hover {
+.music-btn:hover {
   background: rgba(255, 215, 0, 0.15);
   border-color: rgba(255, 215, 0, 0.65);
   transform: scale(1.1);
 }
 
-.music-toggle:active {
+.music-btn:active {
   transform: scale(0.93);
 }
