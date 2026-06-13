@@ -1,0 +1,318 @@
+.picker-page {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: row;
+  background: #080c14;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
+}
+
+.picker-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 40% at 50% 30%, rgba(0, 90, 15, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Left panel ──────────────────────────────────────── */
+.picker-left {
+  position: relative;
+  z-index: 1;
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(255, 215, 0, 0.12);
+  background: rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 215, 0, 0.2) transparent;
+}
+
+.picker-header {
+  padding: 1.4rem 1.2rem 1rem;
+  flex-shrink: 0;
+}
+
+.picker-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ffd700;
+  border: 1.5px solid rgba(255, 215, 0, 0.35);
+  padding: 0.3rem 0.9rem;
+  border-radius: 100px;
+  background: rgba(255, 215, 0, 0.06);
+  margin-bottom: 0.8rem;
+}
+
+.picker-title {
+  font-size: clamp(1.3rem, 2vw, 1.9rem);
+  font-weight: 900;
+  margin: 0 0 0.4rem;
+  background: linear-gradient(160deg, #fff 0%, #ffd700 40%, #ff8c00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.picker-status {
+  margin: 0;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ── Selected panel ─────────────────────────────────── */
+.selected-panel {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: 0.8rem 1.2rem 1rem;
+  border-top: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.panel-label {
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.28);
+  margin-bottom: 0.7rem;
+}
+
+.panel-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.selected-slot {
+  position: relative;
+  width: 100%;
+  height: 64px;
+  border-radius: 9px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  padding: 0 0.9rem;
+  transition: border-color 0.25s, background 0.2s;
+  box-sizing: border-box;
+}
+
+.selected-slot.slot-filled {
+  cursor: pointer;
+  border-style: solid;
+  border-color: rgba(255, 215, 0, 0.6);
+  background: rgba(255, 215, 0, 0.07);
+  animation: slotIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.selected-slot.slot-filled:hover {
+  border-color: rgba(220, 80, 80, 0.7);
+  background: rgba(220, 50, 50, 0.12);
+}
+
+.selected-slot.slot-filled:hover .slot-remove {
+  opacity: 1;
+}
+
+.selected-slot.slot-filled:hover .slot-flag,
+.selected-slot.slot-filled:hover .slot-name {
+  opacity: 0.4;
+}
+
+.slot-flag {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.slot-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.75);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-placeholder {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.12);
+}
+
+.slot-remove {
+  position: absolute;
+  right: 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: rgba(220, 80, 80, 0.85);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.slot-flag,
+.slot-name {
+  transition: opacity 0.15s;
+}
+
+@keyframes slotIn {
+  0%   { transform: scale(0.88); opacity: 0; }
+  100% { transform: scale(1);    opacity: 1; }
+}
+
+/* ── Right panel ─────────────────────────────────────── */
+.picker-right {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Country grid ────────────────────────────────────── */
+.country-grid {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 0.8rem;
+  padding: 1.2rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 215, 0, 0.25) transparent;
+  align-content: start;
+}
+
+.country-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.1rem 0.5rem 0.9rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s, opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 130px;
+}
+
+.country-card:hover:not(.card-selected):not(.card-disabled) {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: rgba(255, 215, 0, 0.45);
+  transform: translateY(-3px) scale(1.03);
+}
+
+.country-card:active:not(.card-selected):not(.card-disabled) {
+  transform: scale(0.96);
+}
+
+.card-selected {
+  background: rgba(255, 215, 0, 0.08) !important;
+  border-color: rgba(255, 215, 0, 0.6) !important;
+  opacity: 0.55;
+  animation: cardPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card-selected:hover {
+  background: rgba(220, 50, 50, 0.15) !important;
+  border-color: rgba(220, 80, 80, 0.7) !important;
+  opacity: 1 !important;
+  transform: scale(0.97);
+}
+
+.card-disabled {
+  opacity: 0.22;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.card-flag {
+  font-size: 3.2rem;
+  line-height: 1;
+}
+
+.card-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.card-check {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #ffd700;
+  transition: color 0.15s;
+}
+
+.card-selected:hover .card-uncheck {
+  color: rgba(220, 80, 80, 0.9);
+}
+
+@keyframes cardPop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+/* ── Flying flag ─────────────────────────────────────── */
+.flying-flag {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  font-size: 2.4rem;
+  line-height: 1;
+  transform-origin: center center;
+  margin-left: -1.2rem;
+  margin-top: -1.2rem;
+  animation: flyFlag 0.52s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+
+@keyframes flyFlag {
+  0% {
+    transform: translate(0, 0) scale(1.6);
+    opacity: 1;
+    filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.9));
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(0.9);
+    opacity: 0;
+    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.3));
+  }
+}
