@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { CountryPicker } from './CountryPicker'
 import { Bracket } from './Bracket'
 import { LetsPlay } from './LetsPlay'
+import { Kickoff } from './Kickoff'
 import './App.css'
 
 const TEAMS = [
@@ -46,10 +47,11 @@ const TEAMS = [
 const MAX_PLAYERS = 16
 
 function App() {
-  const [screen, setScreen] = useState('start') // 'start' | 'players' | 'game' | 'bracket' | 'letsplay'
+  const [screen, setScreen] = useState('start') // 'start' | 'players' | 'game' | 'bracket' | 'letsplay' | 'kickoff'
   const [playerCount, setPlayerCount] = useState(2)
   const [selectedTeams, setSelectedTeams] = useState([])
   const [currentMatches, setCurrentMatches] = useState([])
+  const [selectedTopic, setSelectedTopic] = useState(null)
   const [musicOn, setMusicOn] = useState(true)
   const [musicPaused, setMusicPaused] = useState(false)
   const audioRef = useRef(null)
@@ -145,6 +147,18 @@ function App() {
         <LetsPlay
           matches={currentMatches}
           onBack={() => setScreen('bracket')}
+          onStart={topic => {
+            setSelectedTopic(topic)
+            setScreen('kickoff')
+          }}
+        />
+      )}
+
+      {screen === 'kickoff' && (
+        <Kickoff
+          match={currentMatches[0]}
+          topic={selectedTopic}
+          onBack={() => setScreen('letsplay')}
         />
       )}
 

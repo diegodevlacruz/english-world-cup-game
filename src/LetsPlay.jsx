@@ -4,12 +4,11 @@ import './LetsPlay.css'
 const TOPICS = [
   'Present Simple vs Continuous',
   'Present Perfect vs Past Simple',
-  'Present Perfect vs Perfect Continuous',
   'Will vs Going to',
   'Mixed Review',
 ]
 
-export function LetsPlay({ matches, onBack }) {
+export function LetsPlay({ matches, onBack, onStart }) {
   const [selectedTopic, setSelectedTopic] = useState(null)
 
   function toggleTopic(topic) {
@@ -30,7 +29,7 @@ export function LetsPlay({ matches, onBack }) {
       <section className="fixture-section">
         <p className="section-label">Next Match</p>
         <div className="fixture-list">
-          {matches.map((match, i) => (
+          {matches.slice(0, 1).map((match, i) => (
             <div key={i} className="fixture-row">
               <div className="fixture-team fixture-team-left">
                 <span className="fixture-flag">{match.a.flag}</span>
@@ -85,6 +84,7 @@ export function LetsPlay({ matches, onBack }) {
           type="button"
           className={`letsplay-start-btn${selectedTopic ? ' start-ready' : ''}`}
           disabled={!selectedTopic}
+          onClick={() => selectedTopic && onStart(selectedTopic)}
         >
           {selectedTopic ? `Start: ${selectedTopic} →` : 'Pick a topic first'}
         </button>
